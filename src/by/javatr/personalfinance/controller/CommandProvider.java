@@ -23,7 +23,8 @@ final class CommandProvider {
         repository.put(CommandName.DELETE_USER, new DeleteUser());
 
         repository.put(CommandName.ADD_ACCOUNT, new AddAccount());
-        repository.put(CommandName.GET_ACCOUNT, new GetAccount());
+        repository.put(CommandName.GET_ACCOUNT_LIST, new GetAccount());
+        repository.put(CommandName.GET_BALANCE, new GetBalance());
         repository.put(CommandName.UPDATE_ACCOUNT, new UpdateAccount());
         repository.put(CommandName.DELETE_ACCOUNT, new DeleteAccount());
 

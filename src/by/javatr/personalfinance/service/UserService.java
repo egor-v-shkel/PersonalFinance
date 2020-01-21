@@ -6,6 +6,6 @@ public interface UserService {
     String singIn(String login, String password) throws ServiceException;
     String singOut(String userID, String password) throws ServiceException;
     String register(String login, String password) throws ServiceException;
-    String updateData(String userID, String login, String password) throws ServiceException;
+    String updateData(String userID, String login,String oldPassword, String newPassword) throws ServiceException;
     String delete(String userID, String password) throws ServiceException;
 }

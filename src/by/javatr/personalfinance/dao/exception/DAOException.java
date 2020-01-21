@@ -1,6 +1,6 @@
 package by.javatr.personalfinance.dao.exception;
 
-public class DAOException extends RuntimeException {
+public class DAOException extends Exception {
     public DAOException() {
         super();
     }

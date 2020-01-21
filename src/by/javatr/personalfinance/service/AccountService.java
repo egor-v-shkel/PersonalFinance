@@ -1,12 +1,18 @@
 package by.javatr.personalfinance.service;
 
-import by.javatr.personalfinance.bean.User;
 import by.javatr.personalfinance.service.exception.ServiceException;
 
 public interface AccountService {
 
-    void singIn(String login, String password) throws ServiceException;
-    void singOut(String login) throws ServiceException;
-    void registration(User user, String password) throws ServiceException;
+    String addAccount(String login, String name, String type_id, String initial_amount) throws ServiceException;
+
+    String calculateBalance(String login, String name) throws ServiceException;
+
+    String updateAccount(String accountId, String name, String initialAmount) throws ServiceException;
+
+    String getAccountList(String login) throws ServiceException;
+
+    String deleteAccount(String login, String name) throws ServiceException;
+
 }
 

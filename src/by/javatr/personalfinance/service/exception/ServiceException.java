@@ -1,6 +1,6 @@
 package by.javatr.personalfinance.service.exception;
 
-public class ServiceException extends RuntimeException {
+public class ServiceException extends Exception {
 
     public ServiceException() {
 

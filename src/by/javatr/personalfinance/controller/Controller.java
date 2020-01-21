@@ -1,6 +1,8 @@
 package by.javatr.personalfinance.controller;
 
 import by.javatr.personalfinance.controller.command.Command;
+import by.javatr.personalfinance.service.utill.Logger;
+
 
 public class Controller {
     private final CommandProvider provider = CommandProvider.getInstance();
@@ -18,7 +20,13 @@ public class Controller {
                 "WRONG_REQUEST";
         executionCommand = provider.getCommand(commandName);
 
-        response = executionCommand.execute(request);
+        try {
+            response = executionCommand.execute(request);
+        } catch (ControllerException e) {
+            response = "Request format exception.";
+            e.printStackTrace();
+            Logger.log(getClass(), e);
+        }
         return response;
     }
 }

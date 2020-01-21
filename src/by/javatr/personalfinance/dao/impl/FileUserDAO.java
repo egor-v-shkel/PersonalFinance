@@ -3,58 +3,137 @@ package by.javatr.personalfinance.dao.impl;
 import by.javatr.personalfinance.bean.User;
 import by.javatr.personalfinance.dao.UserDAO;
 import by.javatr.personalfinance.dao.exception.DAOException;
-import by.javatr.personalfinance.service.utill.FileDatabase;
+import by.javatr.personalfinance.dao.utill.FileDatabase;
 
-import java.io.IOException;
+import java.io.*;
+import java.util.*;
 
 public class FileUserDAO implements UserDAO {
     @Override
-    public String register(String login, String password) throws DAOException {
-        FileDatabase fileDatabase = FileDatabase.getInstance();
-        String userDBPath;
-        String path2;
-        String response;
+    public String register(User newUser) throws DAOException {
+        Map<String, User> userDB = mapDB();
+        String id = Long.toString(newUser.getId());
+        userDB.put(id, newUser);
+        String writeDBResponse = writeDB(userDB);
 
-        try {
-            userDBPath = fileDatabase.getDB("user.db");
-            path2 = fileDatabase.getDB("access.info.base");
-            String userFromBase = findUser(accessInfo);
-            if (userFromBase == null) {
+        if (!writeDBResponse.equals("OK")) throw new DAOException("Write to DB exception");
 
-                if (user.getId() == 0) {
-                    user.setId(IdGenerator.getInstance().generate(userDBPath));
-                }
+        return writeDBResponse;
+    }
 
-                fileDatabase.addLine(userDBPath, user.toString());
-                accessInfo.setUserId(user.getId());
-                fileDatabase.addLine(path2, accessInfo.toString());
-                response = "Done.";
-            } else response = "USER_EXIST";
+    @Override
+    public User getUser(String login) throws DAOException {
+        HashMap<String, User> userDB = mapDB();
+        Collection<User> values = userDB.values();
 
-        } catch (IOException | RuntimeException e) {
-            throw new DAOException("DAO layer: " + e.getMessage());
+
+        for (User user :
+                values) {
+            if (user.getLogin().equals(login)){
+                return user;
+            }
         }
+
+        throw new DAOException("Can't get user with requested login");
+    }
+
+    @Override
+    public User getUser(long id) throws DAOException {
+        Map<String, User> userDB = mapDB();
+        return userDB.get(Long.toString(id));
+    }
+
+    @Override
+    public Map<String, User> getAllUsers() throws DAOException {
+        return mapDB();
+    }
+
+    @Override
+    public String singIn(User user) throws DAOException {
+        Map<String, User> userDB = mapDB();
+        String id = Long.toString(user.getId());
+        userDB.put(id, user);
+        writeDB(userDB);
+
+        return null;
+    }
+
+    @Override
+    public String singOut(User user) throws DAOException {
+        Map<String, User> userDB = mapDB();
+        String id = Long.toString(user.getId());
+        userDB.put(id, user);
+        writeDB(userDB);
+
+        return null;
+    }
+
+    @Override
+    public String updateData(User user) throws DAOException {
+        Map<String, User> userDB = mapDB();
+        String id = Long.toString(user.getId());
+        userDB.put(id, user);
+        writeDB(userDB);
+
+        return null;
+    }
+
+    @Override
+    public String delete(User user) throws DAOException {
+        Map<String, User> userDB = mapDB();
+        String id = Long.toString(user.getId());
+        userDB.remove(id);
+        writeDB(userDB);
+
+        return null;
+    }
+
+    private HashMap<String, User> mapDB() throws DAOException {
+
+        HashMap<String, User> userDB;
+        String userDBName = User.class.getSimpleName();
+        FileDatabase fileDatabase = FileDatabase.getInstance();
+        String pathToDB;
+        try {
+            pathToDB = fileDatabase.getDBDir("db.host", userDBName);
+        } catch (IOException e) {
+            throw new DAOException("Database read exception: "+e.getMessage());
+        }
+
+        try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(pathToDB)))
+        {
+
+            userDB=((HashMap<String, User>)ois.readObject());
+        }
+        catch(Exception ex){
+
+            throw new DAOException("Error during mapping database.", ex);
+        }
+
+        return userDB;
+    }
+
+    public String writeDB(Map<String, User> userDB) throws DAOException {
+        String userDBName = User.class.getSimpleName();
+        FileDatabase fileDatabase = FileDatabase.getInstance();
+        String pathToDB;
+        String response = null;
+        try {
+            pathToDB = fileDatabase.getDBDir("db.host", userDBName);
+        } catch (IOException e) {
+            throw new DAOException("Can't get DB directory from config file.", e);
+        }
+
+        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(pathToDB)))
+        {
+            oos.writeObject(userDB);
+            response = "OK";
+        }
+        catch(Exception ex){
+
+            throw new DAOException("Error during write to DB.", ex);
+        }
+
         return response;
-
-    }
-
-    @Override
-    public String singIn(User newUser) throws DAOException {
-        return null;
-    }
-
-    @Override
-    public String updateData(long userID, String login, String password) throws DAOException {
-        return null;
-    }
-
-    @Override
-    public String delete(long userID, String password) throws DAOException {
-        return null;
-    }
-
-    @Override
-    public String singOut(long userID, String password) {
-        return null;
     }
 }

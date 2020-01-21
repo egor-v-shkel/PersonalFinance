@@ -2,7 +2,7 @@ package by.javatr.personalfinance.dao.impl;
 
 import by.javatr.personalfinance.dao.AccountDAO;
 import by.javatr.personalfinance.dao.exception.DAOException;
-import by.javatr.personalfinance.domainmodel.AccountType;
+import by.javatr.personalfinance.service.AccountType;
 
 public class FileAccountDAO implements AccountDAO {
     @Override

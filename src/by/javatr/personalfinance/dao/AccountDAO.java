@@ -1,7 +1,7 @@
 package by.javatr.personalfinance.dao;
 
 import by.javatr.personalfinance.dao.exception.DAOException;
-import by.javatr.personalfinance.domainmodel.AccountType;
+import by.javatr.personalfinance.service.AccountType;
 
 public interface AccountDAO {
     String add(String name, AccountType type, long initialAmount) throws DAOException;

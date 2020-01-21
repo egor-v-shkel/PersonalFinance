@@ -1,12 +1,14 @@
 package by.javatr.personalfinance.controller.command.impl;
 
+import by.javatr.personalfinance.controller.ControllerException;
 import by.javatr.personalfinance.controller.command.UserCommand;
 import by.javatr.personalfinance.service.exception.RequestFormatException;
+import by.javatr.personalfinance.service.exception.ServiceException;
 
 public class SingIn extends UserCommand {
 
     @Override
-    public String execute(String request) {
+    public String execute(String request) throws ControllerException {
         try {
             requestParams = parser.getParams(request);
             login = requestParams.get("login");
@@ -15,7 +17,12 @@ public class SingIn extends UserCommand {
             response = "Wrong request format";
         }
 
-        response = userService.singIn(login, password);
+        try {
+            response = userService.singIn(login, password);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            throw new ControllerException("Command layer exception: " + e.getMessage());
+        }
         return response;
     }
 }
