@@ -11,23 +11,25 @@ import java.util.*;
 public class FileUserDAO implements UserDAO {
     @Override
     public String register(User newUser) throws DAOException {
+        String response = "REGISTER fail";
         Map<Long, User> userDB = readDB();
 
         long nextID = FileDatabase.getInstance().getNextID(userDB);
 
         userDB.put(nextID, newUser);
-        String writeDBResponse = write(userDB);
+        boolean writeToDBResponse = write(userDB);
 
-        if (!writeDBResponse.equals("OK")) throw new DAOException("Write to DB exception");
+        if (writeToDBResponse) {
+            response = "REGISTER fail.";
+        }
 
-        return writeDBResponse;
+        return response;
     }
 
     @Override
     public User getUser(String login) throws DAOException {
         HashMap<Long, User> userDB = readDB();
         Collection<User> values = userDB.values();
-
 
         for (User user :
                 values) {
@@ -52,39 +54,55 @@ public class FileUserDAO implements UserDAO {
 
     @Override
     public String singIn(User user) throws DAOException {
+        String response = "SING_IN fail";
         Map<Long, User> userDB = readDB();
-        userDB.put(user.getId(), user);
-        write(userDB);
+        userDB.replace(user.getId(), user);
+        boolean writeResponse = write(userDB);
+        if(writeResponse){
+            response = "SING_IN success";
+        }
 
         return null;
     }
 
     @Override
     public String singOut(User user) throws DAOException {
+        String response = "SING_OUT fail";
         Map<Long, User> userDB = readDB();
-        userDB.put(user.getId(), user);
-        write(userDB);
+        userDB.replace(user.getId(), user);
+        boolean writeResponse = write(userDB);
+        if(writeResponse){
+            response = "SING_OUT success";
+        }
 
-        return null;
+        return response;
     }
 
     @Override
     public String updateData(User user) throws DAOException {
+        String response = "UPDATE fail";
         Map<Long, User> userDB = readDB();
-        userDB.put(user.getId(), user);
-        write(userDB);
+        userDB.replace(user.getId(), user);
+        boolean writeResponse = write(userDB);
+        if(writeResponse){
+            response = "UPDATE success";
+        }
 
-        return null;
+        return response;
     }
 
     @Override
     public String delete(User user) throws DAOException {
+        String response = "UPDATE fail";
         Map<Long, User> userDB = readDB();
         String id = Long.toString(user.getId());
         userDB.remove(id);
-        write(userDB);
+        boolean writeResponse = write(userDB);
+        if(writeResponse){
+            response = "UPDATE success";
+        }
 
-        return null;
+        return response;
     }
 
     private HashMap<Long, User> readDB() throws DAOException {
@@ -103,18 +121,18 @@ public class FileUserDAO implements UserDAO {
 
             userDB = ((HashMap<Long, User>) ois.readObject());
         } catch (Exception ex) {
-
+            ex.printStackTrace();
             throw new DAOException("Error during mapping user info to database.", ex);
         }
 
         return userDB;
     }
 
-    public String write(Map<Long, User> userDB) throws DAOException {
+    public boolean write(Map<Long, User> userDB) throws DAOException {
         String userDBName = User.class.getSimpleName();
         FileDatabase fileDatabase = FileDatabase.getInstance();
         String pathToDB;
-        String response = null;
+        boolean response = false;
         try {
             pathToDB = fileDatabase.getDBDir("db.host", userDBName);
         } catch (IOException e) {
@@ -123,7 +141,7 @@ public class FileUserDAO implements UserDAO {
 
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(pathToDB))) {
             oos.writeObject(userDB);
-            response = "OK";
+            response = true;
         } catch (Exception ex) {
 
             throw new DAOException("Error during write to DB.", ex);

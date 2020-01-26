@@ -12,7 +12,7 @@ public class AddAccount extends AccountCommand {
         try {
             requestParams = parser.getParams(request);
             String login = requestParams.get("login");
-            String name = requestParams.get("name");
+            String name = requestParams.get("account_name");
             String type = requestParams.get("type");
             String initialAmount = requestParams.get("initial_amount");
             response = accountService.addAccount(login, name, type, initialAmount);

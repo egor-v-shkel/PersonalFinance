@@ -12,7 +12,8 @@ public interface AccountService {
 
     String getAccountList(String login) throws ServiceException;
 
-    String deleteAccount(String login, String name) throws ServiceException;
+    String deleteAccount(String accountId) throws ServiceException;
 
+    String getAccount(String accountId) throws ServiceException;
 }
 

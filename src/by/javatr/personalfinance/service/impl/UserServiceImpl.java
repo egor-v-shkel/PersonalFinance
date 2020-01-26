@@ -62,13 +62,13 @@ public class UserServiceImpl implements UserService {
         }
 
         UserDAO fileUserDAO = DAOFactory.getInstance().getFileUserDAO();
-        String response = "SIGN_IN success";
+        String response = null;
 
         User user;
         try {
             user = fileUserDAO.getUser(login);
 
-            if (user.isSignInStatus()) {
+            if (user.isSigned()) {
                 response = "SING_IN already signed in";
                 return response;
             }
@@ -77,6 +77,7 @@ public class UserServiceImpl implements UserService {
                     && user.getLogin().equals(login)) {
                 user.setSignInStatus(true);
                 fileUserDAO.singIn(user);
+                response = "SIGN_IN success";
             }
         } catch (DAOException e) {
             response = "SING_IN unknown login.";
@@ -102,7 +103,7 @@ public class UserServiceImpl implements UserService {
         try {
             user = fileUserDAO.getUser(login);
 
-            if (!user.isSignInStatus()) {
+            if (!user.isSigned()) {
                 response = "SING_OUT already signed out";
                 return response;
             }

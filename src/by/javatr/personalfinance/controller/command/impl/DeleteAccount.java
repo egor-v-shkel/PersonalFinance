@@ -11,9 +11,8 @@ public class DeleteAccount extends AccountCommand {
 
         try {
             requestParams = parser.getParams(request);
-            String login = requestParams.get("login");
-            String name = requestParams.get("account_name");
-            response = accountService.deleteAccount(login, name);
+            String accountId = requestParams.get("account_id");
+            response = accountService.deleteAccount(accountId);
         } catch (ServiceException e) {
             e.printStackTrace();
             throw new ControllerException("Command exception: " + e.getMessage());

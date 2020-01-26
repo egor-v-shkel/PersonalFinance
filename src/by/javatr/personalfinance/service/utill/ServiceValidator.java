@@ -20,7 +20,7 @@ public class ServiceValidator {
         return longCheck;
     }
 
-    public static boolean isValidAmount(String initialAmount) {
+    public static boolean isInvalidAmount(String initialAmount) {
         if (initialAmount == null) return false;
 
         boolean longCheck;

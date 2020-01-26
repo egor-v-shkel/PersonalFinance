@@ -48,7 +48,7 @@ public class FileDatabase {
             max = 1L;
         }
 
-        return max;
+        return max+1L;
 
     }
 }

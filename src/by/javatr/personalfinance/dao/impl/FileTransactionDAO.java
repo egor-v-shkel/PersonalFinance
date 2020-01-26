@@ -28,7 +28,7 @@ public class FileTransactionDAO implements TransactionDAO {
     }
 
     @Override
-    public List<Transaction> getAll() throws DAOException {
+    public List<Transaction> getAll(long accountId) throws DAOException {
         return null;
     }
 }

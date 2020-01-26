@@ -43,7 +43,7 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public boolean isSignInStatus() {
+    public boolean isSigned() {
         return signInStatus;
     }
 

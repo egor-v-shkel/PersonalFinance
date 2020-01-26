@@ -8,10 +8,7 @@ import by.javatr.personalfinance.dao.utill.FileDatabase;
 import by.javatr.personalfinance.service.AccountType;
 
 import java.io.*;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class FileAccountDAO implements AccountDAO {
     @Override
@@ -36,11 +33,6 @@ public class FileAccountDAO implements AccountDAO {
     }
 
     @Override
-    public String getInfo(String accountID) throws DAOException {
-        return null;
-    }
-
-    @Override
     public Account getAccount(long userID, String accountName) throws DAOException {
         HashMap<Long, Account> accountDB = readDb();
         Collection<Account> values = accountDB.values();
@@ -57,18 +49,73 @@ public class FileAccountDAO implements AccountDAO {
     }
 
     @Override
-    public String update(String accountID, String name, int initialAmount) throws DAOException {
-        return null;
+    public Account getAccount(long accountId) throws DAOException {
+        HashMap<Long, Account> accountDB = readDb();
+        return accountDB.get(accountId);
     }
 
     @Override
-    public String deleteAccount(String accountID) throws DAOException {
-        return null;
+    public List<Account> getAccountList(String login) throws DAOException {
+        List<Account> accounts = null;
+        try {
+            accounts =  new ArrayList<>(readDb().values());
+        } catch (DAOException e) {
+            e.printStackTrace();
+            throw new DAOException();
+        }
+
+        return accounts;
     }
 
     @Override
-    public long getId(String accountName) throws DAOException {
-        return 0;
+    public String update(Account account) throws DAOException {
+        String response = "UPDATE failed";
+
+        HashMap<Long, Account> accountDB = readDb();
+
+        accountDB.replace(account.getId(), account);
+
+        if (writeDB(accountDB)) {
+            response = "UPDATE success";
+        }
+
+        return response;
+    }
+
+    @Override
+    public String deleteAccount(long accountID) throws DAOException {
+        String response = "DELETE failed";
+
+        HashMap<Long, Account> accountDB = readDb();
+
+        readDb().remove(accountID);
+
+        if (writeDB(accountDB)) {
+            response = "DELETE success";
+        }
+
+        return response;
+    }
+
+    @Override
+    public long getId(long userId, String accountName) throws DAOException {
+        HashMap<Long, Account> accountDB = readDb();
+        long accountId = 0L;
+
+        Collection<Account> values = readDb().values();
+        for (Account a :
+                values) {
+            if (a.getUserID() == userId && accountName.equals(a.getName())){
+                accountId = a.getId();
+                break;
+            }
+        }
+
+        if (accountId == 0L) {
+            throw new DAOException("GET_ID account not found");
+        }
+
+        return accountId;
     }
 
     public HashMap<Long, Account> readDb() throws DAOException {

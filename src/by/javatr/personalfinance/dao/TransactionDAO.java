@@ -14,5 +14,5 @@ public interface TransactionDAO {
 
     String delete(long transactionID) throws DAOException;
 
-    List<Transaction> getAll() throws DAOException;
+    List<Transaction> getAll(long accountId) throws DAOException;
 }
