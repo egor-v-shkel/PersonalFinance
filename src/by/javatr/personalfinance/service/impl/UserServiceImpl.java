@@ -4,7 +4,6 @@ import by.javatr.personalfinance.bean.User;
 import by.javatr.personalfinance.dao.UserDAO;
 import by.javatr.personalfinance.dao.exception.DAOException;
 import by.javatr.personalfinance.dao.factory.DAOFactory;
-import by.javatr.personalfinance.dao.utill.FileDatabase;
 import by.javatr.personalfinance.service.Role;
 import by.javatr.personalfinance.service.UserService;
 import by.javatr.personalfinance.service.exception.ServiceException;
@@ -17,7 +16,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String register(String login, String password) throws ServiceException {
-        String response = "USER_EXIST";
+        String response = "REGISTER user exist";
         if (ServiceValidator.isValidUserdata(login))
             throw new UserDataException("Login can't be null or empty.");
         if (ServiceValidator.isValidUserdata(password))
@@ -29,19 +28,11 @@ public class UserServiceImpl implements UserService {
                     .getFileUserDAO()
                     .getUser(login);
         } catch (DAOException e) {
-            response = "DATABASE_CONNECTION_PROBLEM";
-            e.printStackTrace();
+            response = "USER_REGISTERED";
         }
 
         if (user == null) {
             User newUser = new User();
-            try {
-                newUser.setId(FileDatabase.getInstance().getNextID("user.db"));
-            } catch (DAOException e) {
-                e.printStackTrace();
-                response = "DATABASE_CONNECTION_PROBLEM";
-                return response;
-            }
             newUser.setLogin(login);
             newUser.setPassword(password);
             newUser.setSignInStatus(true);
@@ -51,8 +42,9 @@ public class UserServiceImpl implements UserService {
             try {
                 response = DAOFactory.getInstance().getFileUserDAO().register(newUser);
             } catch (DAOException e) {
-                response = "DATABASE_CONNECTION_PROBLEM";
                 e.printStackTrace();
+                response = "DATABASE_CONNECTION_PROBLEM";
+                return response;
             }
         }
 
@@ -87,15 +79,48 @@ public class UserServiceImpl implements UserService {
                 fileUserDAO.singIn(user);
             }
         } catch (DAOException e) {
-            response = "DATABASE_CONNECTION_PROBLEM";
-            e.printStackTrace();
+            response = "SING_IN unknown login.";
+            //e.printStackTrace();
         }
 
         return response;
     }
 
     @Override
-    public String updateData(String userID, String newLogin,String oldPassword, String newPassword)
+    public String singOut(String login, String password) throws ServiceException {
+
+        if (ServiceValidator.isValidUserdata(password))
+            throw new UserDataException("Password can't be null or empty.");
+        if (ServiceValidator.isValidID(login))
+            throw new UserDataException("Login must be natural long number.");
+
+        UserDAO fileUserDAO = DAOFactory.getInstance().getFileUserDAO();
+        String response = "SIGN_OUT success";
+
+
+        User user;
+        try {
+            user = fileUserDAO.getUser(login);
+
+            if (!user.isSignInStatus()) {
+                response = "SING_OUT already signed out";
+                return response;
+            }
+
+            if (user.getPassword().equals(password)
+                    && user.getLogin().equals(login)) {
+                user.setSignInStatus(false);
+                fileUserDAO.singOut(user);
+            }
+        } catch (DAOException e) {
+            response = "SING_OUT problem occur while accessing DB";
+            e.printStackTrace();
+        }
+        return response;
+    }
+
+    @Override
+    public String updateData(String userID, String newLogin, String oldPassword, String newPassword)
             throws ServiceException {
 
         if (ServiceValidator.isValidUserdata(newLogin))
@@ -113,7 +138,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             User user = fileUserDAO.getUser(id);
-            if(user.getPassword().equals(oldPassword)){
+            if (user.getPassword().equals(oldPassword)) {
                 user.setLogin(newLogin);
                 user.setPassword(newPassword);
                 fileUserDAO.updateData(user);
@@ -139,7 +164,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             User user = fileUserDAO.getUser(id);
-            if(user.getPassword().equals(password)){
+            if (user.getPassword().equals(password)) {
                 fileUserDAO.delete(user);
             }
         } catch (DAOException e) {
@@ -149,39 +174,5 @@ public class UserServiceImpl implements UserService {
 
         return response;
 
-    }
-
-    @Override
-    public String singOut(String userID, String password) throws ServiceException {
-
-        if (ServiceValidator.isValidUserdata(password))
-            throw new UserDataException("Password can't be null or empty.");
-        if (ServiceValidator.isValidID(userID))
-            throw new UserDataException("UserID must be natural long number.");
-
-        UserDAO fileUserDAO = DAOFactory.getInstance().getFileUserDAO();
-        String response = "SIGN_OUT success";
-
-        long id = Long.parseLong(userID);
-
-        User user;
-        try {
-            user = fileUserDAO.getUser(id);
-
-            if (!user.isSignInStatus()) {
-                response = "SING_OUT already signed out";
-                return response;
-            }
-
-            if (user.getPassword().equals(password)
-                    && user.getId() == id) {
-                user.setSignInStatus(false);
-                fileUserDAO.singOut(user);
-            }
-        } catch (DAOException e) {
-            response = "SING_OUT problem occur while accessing DB";
-            e.printStackTrace();
-        }
-        return response;
     }
 }

@@ -1,16 +1,13 @@
 package by.javatr.personalfinance.dao.utill;
 
+import by.javatr.personalfinance.bean.User;
 import by.javatr.personalfinance.dao.exception.DAOException;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Set;
 
 public class FileDatabase {
     private static FileDatabase ourInstance = new FileDatabase();
@@ -37,46 +34,20 @@ public class FileDatabase {
         return response + String.format("/%s.txt", nameDB);
     }
 
-    public long getNextID(String pathToDB) throws DAOException {
+    public long getNextID(Map<String, User> database) throws DAOException {
 
-        List<String> base;
-        long id;
+        Set<String> idSet = database.keySet();
 
-        try {
-            base = readRecords(pathToDB);
-            if (base.size() == 0) {
-                return 1L;
-            } else {
-                String record = base.get(base.size() - 1);
-                Pattern p = Pattern.compile(".+id=([\\d]+),.+");
-                Matcher m = p.matcher(record);
+        long max = Long.MIN_VALUE;
 
-                id = Long.parseLong(m.group(0));
+        for (String id : idSet) {
+            long idL = Long.parseLong(id);
+            if (idL > max) {
+                max = idL;
             }
-        } catch (IOException e) {
-            throw new DAOException("Exception while trying to read records from DB: " + e);
-        }
-        return id + 1L;
-    }
-
-    public boolean writeToDB(String pathToDB, String record) {
-
-        return false;
-    }
-
-    private List<String> readRecords(String path) throws IOException {
-        List<String> recordList = new ArrayList<>();
-        FileReader fileReader = new FileReader(path);
-
-        try (BufferedReader bufferedReader = new BufferedReader(fileReader)) {
-            String record;
-            while ((record = bufferedReader.readLine()) != null) {
-                recordList.add(record);
-            }
-        } catch (IOException e) {
-            throw new IOException("FileManipulator: readRecords(): " + e.getMessage());
         }
 
-        return recordList;
+        return max;
+
     }
 }

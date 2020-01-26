@@ -4,6 +4,7 @@ public enum CommandName {
 
     REGISTER,
     SING_IN,
+    SING_OUT,
     UPDATE_USER_DATA,
     DELETE_USER,
 

@@ -11,10 +11,13 @@ import java.util.*;
 public class FileUserDAO implements UserDAO {
     @Override
     public String register(User newUser) throws DAOException {
-        Map<String, User> userDB = mapDB();
-        String id = Long.toString(newUser.getId());
+        Map<String, User> userDB = map();
+
+        long nextID = FileDatabase.getInstance().getNextID(userDB);
+        String id = Long.toString(nextID);
+
         userDB.put(id, newUser);
-        String writeDBResponse = writeDB(userDB);
+        String writeDBResponse = write(userDB);
 
         if (!writeDBResponse.equals("OK")) throw new DAOException("Write to DB exception");
 
@@ -23,13 +26,13 @@ public class FileUserDAO implements UserDAO {
 
     @Override
     public User getUser(String login) throws DAOException {
-        HashMap<String, User> userDB = mapDB();
+        HashMap<String, User> userDB = map();
         Collection<User> values = userDB.values();
 
 
         for (User user :
                 values) {
-            if (user.getLogin().equals(login)){
+            if (user != null && user.getLogin() != null && user.getLogin().equals(login)){
                 return user;
             }
         }
@@ -39,56 +42,56 @@ public class FileUserDAO implements UserDAO {
 
     @Override
     public User getUser(long id) throws DAOException {
-        Map<String, User> userDB = mapDB();
+        Map<String, User> userDB = map();
         return userDB.get(Long.toString(id));
     }
 
     @Override
     public Map<String, User> getAllUsers() throws DAOException {
-        return mapDB();
+        return map();
     }
 
     @Override
     public String singIn(User user) throws DAOException {
-        Map<String, User> userDB = mapDB();
+        Map<String, User> userDB = map();
         String id = Long.toString(user.getId());
         userDB.put(id, user);
-        writeDB(userDB);
+        write(userDB);
 
         return null;
     }
 
     @Override
     public String singOut(User user) throws DAOException {
-        Map<String, User> userDB = mapDB();
+        Map<String, User> userDB = map();
         String id = Long.toString(user.getId());
         userDB.put(id, user);
-        writeDB(userDB);
+        write(userDB);
 
         return null;
     }
 
     @Override
     public String updateData(User user) throws DAOException {
-        Map<String, User> userDB = mapDB();
+        Map<String, User> userDB = map();
         String id = Long.toString(user.getId());
         userDB.put(id, user);
-        writeDB(userDB);
+        write(userDB);
 
         return null;
     }
 
     @Override
     public String delete(User user) throws DAOException {
-        Map<String, User> userDB = mapDB();
+        Map<String, User> userDB = map();
         String id = Long.toString(user.getId());
         userDB.remove(id);
-        writeDB(userDB);
+        write(userDB);
 
         return null;
     }
 
-    private HashMap<String, User> mapDB() throws DAOException {
+    private HashMap<String, User> map() throws DAOException {
 
         HashMap<String, User> userDB;
         String userDBName = User.class.getSimpleName();
@@ -107,13 +110,13 @@ public class FileUserDAO implements UserDAO {
         }
         catch(Exception ex){
 
-            throw new DAOException("Error during mapping database.", ex);
+            throw new DAOException("Error during mapping user info to database.", ex);
         }
 
         return userDB;
     }
 
-    public String writeDB(Map<String, User> userDB) throws DAOException {
+    public String write(Map<String, User> userDB) throws DAOException {
         String userDBName = User.class.getSimpleName();
         FileDatabase fileDatabase = FileDatabase.getInstance();
         String pathToDB;

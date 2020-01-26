@@ -10,15 +10,16 @@ import java.util.regex.Pattern;
 public class RequestParser {
     private static final RequestParser instance = new RequestParser();
 
-    private RequestParser() {}
+    private RequestParser() {
+    }
 
     public static RequestParser getInstance() {
         return instance;
     }
 
     public Map<String, String> getParams(String request) throws RequestFormatException {
-        final String regex = "(.+?):(.+?)(?:, |$)";
-        String commands = request.substring(request.indexOf(' '));
+        final String regex = "([^ ].+?):(.+?)(?:, |$)";
+        String commands = request.substring(request.indexOf(' ') + 1);
 
         if (!commands.matches(regex))
             throw new RequestFormatException("Request didn't meet pattern requirements.\n" +
@@ -27,7 +28,7 @@ public class RequestParser {
         Map<String, String> params = new HashMap<>();
 
         final Pattern pattern = Pattern.compile(regex);
-        final Matcher matcher = pattern.matcher(request);
+        final Matcher matcher = pattern.matcher(commands);
 
         while (matcher.find()) {
             String param = matcher.group(1);

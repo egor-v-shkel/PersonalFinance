@@ -19,6 +19,7 @@ final class CommandProvider {
     CommandProvider() {
         repository.put(CommandName.REGISTER, new Register());
         repository.put(CommandName.SING_IN, new SingIn());
+        repository.put(CommandName.SING_OUT, new SingOut());
         repository.put(CommandName.UPDATE_USER_DATA, new UpdateUserData());
         repository.put(CommandName.DELETE_USER, new DeleteUser());
 
