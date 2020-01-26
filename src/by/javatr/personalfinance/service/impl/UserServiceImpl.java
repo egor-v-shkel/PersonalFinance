@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
             throw new UserDataException("Login must be natural long number.");
 
         UserDAO fileUserDAO = DAOFactory.getInstance().getFileUserDAO();
-        String response = "SIGN_OUT success";
+        String response = null;
 
 
         User user;
@@ -111,6 +111,7 @@ public class UserServiceImpl implements UserService {
                     && user.getLogin().equals(login)) {
                 user.setSignInStatus(false);
                 fileUserDAO.singOut(user);
+                response = "SIGN_OUT success";
             }
         } catch (DAOException e) {
             response = "SING_OUT problem occur while accessing DB";

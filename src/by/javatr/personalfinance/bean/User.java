@@ -14,7 +14,7 @@ public class User implements Serializable {
     private boolean signInStatus;
     private int roleID;
     private boolean banStat;
-    private List<Integer> accountIDList;
+    private List<Long> accountIDList;
 
     public User() {
     }
@@ -67,11 +67,11 @@ public class User implements Serializable {
         this.banStat = banStat;
     }
 
-    public List<Integer> getAccountIDList() {
+    public List<Long> getAccountIDList() {
         return accountIDList;
     }
 
-    public void setAccountIDList(List<Integer> accountIDList) {
+    public void setAccountIDList(List<Long> accountIDList) {
         this.accountIDList = accountIDList;
     }
 

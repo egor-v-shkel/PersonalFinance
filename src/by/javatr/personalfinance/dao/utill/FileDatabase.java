@@ -1,6 +1,5 @@
 package by.javatr.personalfinance.dao.utill;
 
-import by.javatr.personalfinance.bean.User;
 import by.javatr.personalfinance.dao.exception.DAOException;
 
 import java.io.FileInputStream;
@@ -34,17 +33,19 @@ public class FileDatabase {
         return response + String.format("/%s.txt", nameDB);
     }
 
-    public long getNextID(Map<String, User> database) throws DAOException {
-
-        Set<String> idSet = database.keySet();
+    public <T> long getNextID(Map<Long, T> database) throws DAOException {
+        Set<Long> idSet = database.keySet();
 
         long max = Long.MIN_VALUE;
 
-        for (String id : idSet) {
-            long idL = Long.parseLong(id);
-            if (idL > max) {
-                max = idL;
+        for (Long id : idSet) {
+            if (id > max) {
+                max = id;
             }
+        }
+
+        if (max == Long.MIN_VALUE) {
+            max = 1L;
         }
 
         return max;

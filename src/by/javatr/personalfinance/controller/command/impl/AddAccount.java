@@ -13,9 +13,9 @@ public class AddAccount extends AccountCommand {
             requestParams = parser.getParams(request);
             String login = requestParams.get("login");
             String name = requestParams.get("name");
-            String typeId = requestParams.get("type_id");
+            String type = requestParams.get("type");
             String initialAmount = requestParams.get("initial_amount");
-            response = accountService.addAccount(login, name, typeId, initialAmount);
+            response = accountService.addAccount(login, name, type, initialAmount);
         } catch (ServiceException e) {
             e.printStackTrace();
             throw new ControllerException("Command exception: " + e.getMessage());

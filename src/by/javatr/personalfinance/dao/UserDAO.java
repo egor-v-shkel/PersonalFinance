@@ -3,6 +3,7 @@ package by.javatr.personalfinance.dao;
 import by.javatr.personalfinance.bean.User;
 import by.javatr.personalfinance.dao.exception.DAOException;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserDAO {
@@ -13,7 +14,7 @@ public interface UserDAO {
 
     User getUser(long id) throws DAOException;
 
-    Map<String, User> getAllUsers() throws DAOException;
+    List<User> getAllUsers() throws DAOException;
 
     String singIn(User user) throws DAOException;
 

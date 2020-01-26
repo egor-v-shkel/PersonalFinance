@@ -22,15 +22,25 @@ public class PersonalFinanceApp {
         String delete = controller.executeCommand("DELETE_USER user_id:1, login:Bob, password:987654321");
         System.out.println(delete);
 
-        /*controller.executeCommand("ADD_ACCOUNT login:Bob, account_name:wallet, type_id:cash, initial_amount:100");
+        /*String adminSingIn = controller.executeCommand("SING_IN login:admin, password:admin");
+        System.out.println(adminSingIn);
+        String ban = controller.executeCommand("BAN login:admin, password:admin, user_id:1");
+        System.out.println(adminSingIn);
+        String unban = controller.executeCommand("UNBAN login:admin, password:admin, user_id:1");
+        System.out.println(adminSingIn);
+        String adminSingOut = controller.executeCommand("SING_OUT login:admin, password:admin");
+        System.out.println(adminSingOut);*/
+
+        /*controller.executeCommand("ADD_ACCOUNT login:Bob, account_name:wallet, type:cash, initial_amount:100");
         controller.executeCommand("GET_ACCOUNT_LIST login:Bob");
         controller.executeCommand("GET_BALANCE login:Bob, account_name:wallet");
+        controller.executeCommand("GET_COMMON_BALANCE login:Bob, account_name:wallet");
         controller.executeCommand("UPDATE_ACCOUNT account_id:1, name:Credit card, initial_amount:200");
-        controller.executeCommand("DELETE_ACCOUNT account_id:1");
+        controller.executeCommand("DELETE_ACCOUNT account_id:1");*/
 
-        controller.executeCommand("ADD_TRANSACTION account_id:1, amount:50, description:pay day");
+        /*controller.executeCommand("ADD_TRANSACTION account_id:1, amount:50, description:pay day");
         controller.executeCommand("GET_TRANSACTION transaction_id:1");
-        controller.executeCommand("UPDATE_TRANSACTION transaction_id:1, amount:99, description:pay checkc");
+        controller.executeCommand("UPDATE_TRANSACTION transaction_id:1, amount:99, description:pay check");
         controller.executeCommand("DELETE_TRANSACTION transaction_id:1");*/
 
     }

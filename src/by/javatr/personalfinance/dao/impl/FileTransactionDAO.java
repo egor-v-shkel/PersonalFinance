@@ -1,7 +1,10 @@
 package by.javatr.personalfinance.dao.impl;
 
+import by.javatr.personalfinance.bean.Transaction;
 import by.javatr.personalfinance.dao.TransactionDAO;
 import by.javatr.personalfinance.dao.exception.DAOException;
+
+import java.util.List;
 
 public class FileTransactionDAO implements TransactionDAO {
     @Override
@@ -21,6 +24,11 @@ public class FileTransactionDAO implements TransactionDAO {
 
     @Override
     public String delete(long transactionID) throws DAOException {
+        return null;
+    }
+
+    @Override
+    public List<Transaction> getAll() throws DAOException {
         return null;
     }
 }

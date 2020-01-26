@@ -4,7 +4,7 @@ import by.javatr.personalfinance.service.exception.ServiceException;
 
 public interface AccountService {
 
-    String addAccount(String login, String name, String type_id, String initial_amount) throws ServiceException;
+    String addAccount(String login, String name, String type, String initial_amount) throws ServiceException;
 
     String calculateBalance(String login, String name) throws ServiceException;
 
