@@ -10,7 +10,7 @@ public class PersonalFinanceApp {
 
         Controller controller = new Controller();
 
-        /*String registerResponse = controller.executeCommand("REGISTER login:Bob, password:12345678");
+        String registerResponse = controller.executeCommand("REGISTER login:Bob, password:12345678");
         System.out.println(registerResponse);
         String singIn = controller.executeCommand("SING_IN login:Paul, password:12345678");
         System.out.println(singIn);
@@ -20,7 +20,7 @@ public class PersonalFinanceApp {
                 .executeCommand("UPDATE_USER_DATA user_id:1, login:Bob, oldPassword:12345678, newPassword:987654321");
         System.out.println(updateResponse);
         String delete = controller.executeCommand("DELETE_USER user_id:1, login:Bob, password:987654321");
-        System.out.println(delete);*/
+        System.out.println(delete);
 
         /*String adminSingIn = controller.executeCommand("SING_IN login:admin, password:admin");
         System.out.println(adminSingIn);
