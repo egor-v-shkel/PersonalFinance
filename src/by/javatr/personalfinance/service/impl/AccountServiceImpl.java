@@ -29,7 +29,7 @@ public class AccountServiceImpl implements AccountService {
             throw new UserDataException("Account name can't be null or empty.");
         if (ServiceValidator.isValidUserdata(type))
             throw new UserDataException("Account type can't be null or empty.");
-        if (!ServiceValidator.isInvalidAmount(initialAmount))
+        if (!ServiceValidator.isValidAmount(initialAmount))
             throw new UserDataException("Initial amount must be long number.");
 
         User user = null;
@@ -108,8 +108,7 @@ public class AccountServiceImpl implements AccountService {
 
         List<Transaction> transactionList = null;
         try {
-            long accountId = account.getId();
-            transactionList = fileTransactionDAO.getAll(accountId);
+            transactionList = fileTransactionDAO.getAll(transactionsIDList);
         } catch (DAOException e) {
             e.printStackTrace();
             throw new ServiceException("Unsuccessful attempt to calculate balance. Reason: " + e.getMessage());
@@ -154,7 +153,7 @@ public class AccountServiceImpl implements AccountService {
     public String updateAccount(String accountId, String name, String initialAmount) throws ServiceException {
         if (ServiceValidator.isValidUserdata(name))
             throw new UserDataException("Login can't be null or empty.");
-        if (ServiceValidator.isInvalidAmount(initialAmount))
+        if (ServiceValidator.isValidAmount(initialAmount))
             throw new UserDataException("Amount can't be null or empty.");
         if (ServiceValidator.isValidID(accountId))
             throw new UserDataException("AccountId must be natural long number.");
@@ -212,7 +211,8 @@ public class AccountServiceImpl implements AccountService {
             String name = account.getName();
             AccountType type = account.getType();
             long initialAmount = account.getInitialAmount();
-            List<Transaction> transactions = transactionDAO.getAll(id);
+            List<Long> transactionsIDList = account.getTransactionsIDList();
+            List<Transaction> transactions = transactionDAO.getAll(transactionsIDList);
             long balance = calculate(initialAmount, transactions);
 
             response = String.format("GET_ACCOUNT account_name:%s, account_type:%s, initial_amount:%s, balance:%d",
@@ -256,7 +256,10 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private long calculate(long initialAmount, long accountId) throws DAOException {
-        List<Transaction> transactions = DAOFactory.getInstance().getFileTransactionDAO().getAll(accountId);
+        AccountDAO fileAccountDAO = DAOFactory.getInstance().getFileAccountDAO();
+        Account account = fileAccountDAO.getAccount(accountId);
+        List<Long> transactionsIDList = account.getTransactionsIDList();
+        List<Transaction> transactions = DAOFactory.getInstance().getFileTransactionDAO().getAll(transactionsIDList);
         return calculate(initialAmount, transactions);
     }
 }

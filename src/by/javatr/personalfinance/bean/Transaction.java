@@ -9,18 +9,18 @@ public class Transaction implements Serializable {
     private static final long serialVersionUID = 303044282978682950L;
 
     private long id;
-    private int amount;
+    private long amount;
     private long account_id;
     private Date date;
     private String notes;
 
     public Transaction() {}
 
-    public int getAmount() {
+    public long getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(long amount) {
         this.amount = amount;
     }
 

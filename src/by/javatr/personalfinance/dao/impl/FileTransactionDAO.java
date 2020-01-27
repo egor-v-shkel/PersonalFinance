@@ -1,40 +1,72 @@
 package by.javatr.personalfinance.dao.impl;
 
-import by.javatr.personalfinance.bean.Account;
 import by.javatr.personalfinance.bean.Transaction;
 import by.javatr.personalfinance.dao.TransactionDAO;
 import by.javatr.personalfinance.dao.exception.DAOException;
 import by.javatr.personalfinance.dao.utill.FileDatabase;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class FileTransactionDAO implements TransactionDAO {
     @Override
-    public String add(long accountID, long amount) throws DAOException {
-        return null;
+    public String add(Transaction transaction) throws DAOException {
+        String response = "DAOTransaction add transaction filed";
+        HashMap<Long, Transaction> database = readDb();
+        long nextID = FileDatabase.getInstance().getNextID(database);
+        transaction.setId(nextID);
+        database.put(nextID, transaction);
+        writeDB(database);
+
+        response = "DAOTransaction add transaction success";
+
+        return response;
     }
 
     @Override
-    public String get(long transactionID) throws DAOException {
-        return null;
+    public Transaction get(long transactionID) throws DAOException {
+        HashMap<Long, Transaction> database = readDb();
+        Transaction transaction = database.get(transactionID);
+        return transaction;
     }
 
     @Override
-    public String update(long transactionID, long amount) throws DAOException {
-        return null;
+    public String update(Transaction transaction) throws DAOException {
+        String response = "DAOTransaction update transaction failed.";
+
+        HashMap<Long, Transaction> database = readDb();
+        database.replace(transaction.getId(), transaction);
+
+        return response;
     }
 
     @Override
     public String delete(long transactionID) throws DAOException {
-        return null;
+        String response = "DAOTransaction delete transaction failed.";
+
+        HashMap<Long, Transaction> database = readDb();
+        database.remove(transactionID);
+        writeDB(database);
+
+        response = "DAOTransaction delete transaction success.";
+
+        return response;
     }
 
     @Override
-    public List<Transaction> getAll(long accountId) throws DAOException {
-        return null;
+    public List<Transaction> getAll(List<Long> transactionIdList) throws DAOException {
+        HashMap<Long, Transaction> database = readDb();
+        List<Transaction> transactions = new ArrayList<>();
+        for (long transactionID :
+                transactionIdList) {
+            Transaction transaction = database.get(transactionID);
+            transactions.add(transaction);
+        }
+
+        return transactions;
     }
 
     public HashMap<Long, Transaction> readDb() throws DAOException {

@@ -55,7 +55,7 @@ public class PersonalFinanceApp {
 
         controller.executeCommand("ADD_TRANSACTION account_id:1, amount:50, description:pay day");
         controller.executeCommand("GET_TRANSACTION transaction_id:1");
-        controller.executeCommand("GET_TRANSACTION_LIST transaction_id:1");
+        controller.executeCommand("GET_TRANSACTION_LIST account_id:1");
         controller.executeCommand("UPDATE_TRANSACTION transaction_id:1, amount:99, description:pay check");
         controller.executeCommand("DELETE_TRANSACTION transaction_id:1");
 

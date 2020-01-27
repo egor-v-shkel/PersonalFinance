@@ -33,6 +33,7 @@ final class CommandProvider {
 
         repository.put(CommandName.ADD_TRANSACTION, new AddTransaction());
         repository.put(CommandName.GET_TRANSACTION, new GetTransaction());
+        repository.put(CommandName.GET_TRANSACTION_LIST, new GetTransactionList());
         repository.put(CommandName.UPDATE_TRANSACTION, new UpdateTransaction());
         repository.put(CommandName.DELETE_TRANSACTION, new DeleteTransaction());
 
