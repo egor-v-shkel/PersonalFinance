@@ -11,7 +11,7 @@ public interface AccountDAO {
 
     Account getAccount(long userId, String accountName) throws DAOException;
     Account getAccount(long accountId) throws DAOException;
-    List<Account> getAccountList(String login) throws DAOException;
+    List<Account> getAccountList(long userId) throws DAOException;
 
     String update(Account account) throws DAOException;
 

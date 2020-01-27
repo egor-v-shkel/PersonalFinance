@@ -9,7 +9,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public String update(String accountId, String amount, String description) {
+    public String update(String transactionId, String amount, String description) {
         return null;
     }
 

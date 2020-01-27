@@ -11,6 +11,7 @@ import java.io.*;
 import java.util.*;
 
 public class FileAccountDAO implements AccountDAO {
+
     @Override
     public String add(Account account) throws DAOException {
         String response = null;
@@ -55,10 +56,16 @@ public class FileAccountDAO implements AccountDAO {
     }
 
     @Override
-    public List<Account> getAccountList(String login) throws DAOException {
-        List<Account> accounts = null;
+    public List<Account> getAccountList(long userId) throws DAOException {
+        List<Account> accounts = new ArrayList<>();
         try {
-            accounts =  new ArrayList<>(readDb().values());
+            Collection<Account> values = readDb().values();
+            for (Account a :
+                    values) {
+                if(a.getUserID() == userId){
+                    accounts.add(a);
+                }
+            }
         } catch (DAOException e) {
             e.printStackTrace();
             throw new DAOException();
@@ -142,7 +149,7 @@ public class FileAccountDAO implements AccountDAO {
         return currentDB;
     }
 
-    public <T, E> boolean writeDB(Map<Long, Account> currentDB) throws DAOException {
+    public boolean writeDB(Map<Long, Account> currentDB) throws DAOException {
         boolean response = false;
 
         FileDatabase fileDatabase = FileDatabase.getInstance();

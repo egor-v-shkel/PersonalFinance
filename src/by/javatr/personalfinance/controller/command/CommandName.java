@@ -9,8 +9,10 @@ public enum CommandName {
     DELETE_USER,
 
     ADD_ACCOUNT,
+    GET_ACCOUNT,
     GET_ACCOUNT_LIST,
     GET_BALANCE,
+    GET_COMMON_BALANCE,
     UPDATE_ACCOUNT,
     DELETE_ACCOUNT,
 

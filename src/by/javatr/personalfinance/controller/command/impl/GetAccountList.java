@@ -11,8 +11,8 @@ public class GetAccountList extends AccountCommand {
 
         try {
             requestParams = parser.getParams(request);
-            String login = requestParams.get("login");
-            response = accountService.getAccountList(login);
+            String userId = requestParams.get("user_id");
+            response = accountService.getAccountList(userId);
         } catch (ServiceException e) {
             e.printStackTrace();
             throw new ControllerException("Command exception: " + e.getMessage());

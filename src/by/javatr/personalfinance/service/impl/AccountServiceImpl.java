@@ -108,7 +108,8 @@ public class AccountServiceImpl implements AccountService {
 
         List<Transaction> transactionList = null;
         try {
-            transactionList = fileTransactionDAO.getAll();
+            long accountId = account.getId();
+            transactionList = fileTransactionDAO.getAll(accountId);
         } catch (DAOException e) {
             e.printStackTrace();
             throw new ServiceException("Unsuccessful attempt to calculate balance. Reason: " + e.getMessage());
@@ -117,6 +118,36 @@ public class AccountServiceImpl implements AccountService {
         long sum = calculate(initialAmount, transactionList);
 
         return String.format("GET_BALANCE account:%s balance:%d", accountName, sum);
+    }
+
+    @Override
+    public String calculateCommonBalance(String userId) throws ServiceException {
+        String response = "ADD_ACCOUNT service exception";
+
+        if (ServiceValidator.isValidID(userId))
+            throw new UserDataException("Login can't be null or empty.");
+
+        AccountDAO fileAccountDAO = DAOFactory.getInstance().getFileAccountDAO();
+        TransactionDAO fileTransactionDAO = DAOFactory.getInstance().getFileTransactionDAO();
+
+        long sum = 0L;
+
+        try {
+            long userId1 = Long.parseLong(userId);
+            List<Account> accounts = fileAccountDAO.getAccountList(userId1);
+
+
+
+            for (Account a :
+                    accounts) {
+                sum += calculate(a.getInitialAmount(), a.getId());
+            }
+        } catch (DAOException e) {
+            e.printStackTrace();
+            throw new ServiceException("Unsuccessful attempt to calculate balance. Reason: " + e.getMessage());
+        }
+
+        return String.format("GET_COMMON_BALANCE common_balance:%d", sum);
     }
 
     @Override
@@ -147,16 +178,17 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String getAccountList(String login) throws ServiceException {
-        if (ServiceValidator.isValidID(login))
-            throw new UserDataException("Login can't be null or empty.");
+    public String getAccountList(String userId) throws ServiceException {
+        if (ServiceValidator.isValidID(userId))
+            throw new UserDataException("User id can't be null or empty.");
 
         String response;
 
         AccountDAO fileAccountDAO = DAOFactory.getInstance().getFileAccountDAO();
         try {
-            List<Account> accountList = fileAccountDAO.getAccountList(login);
-            response = String.format("GET_ACCOUNT_LIST user:%s, accounts:%s", login, accountList.toString());
+            long userId1 = Long.parseLong(userId);
+            List<Account> accountList = fileAccountDAO.getAccountList(userId1);
+            response = String.format("GET_ACCOUNT_LIST accounts:%s", accountList.toString());
         } catch (DAOException e) {
             e.printStackTrace();
             throw new ServiceException("GET_ACCOUNT_LIST user has no accounts.", e);
@@ -216,10 +248,16 @@ public class AccountServiceImpl implements AccountService {
 
     private long calculate(long initialAmount, List<Transaction> transactionList) {
         long sum = initialAmount;
+        if (transactionList == null) return sum;
         for (Transaction transaction : transactionList) {
             sum += transaction.getAmount();
         }
         return sum;
+    }
+
+    private long calculate(long initialAmount, long accountId) throws DAOException {
+        List<Transaction> transactions = DAOFactory.getInstance().getFileTransactionDAO().getAll(accountId);
+        return calculate(initialAmount, transactions);
     }
 }
 

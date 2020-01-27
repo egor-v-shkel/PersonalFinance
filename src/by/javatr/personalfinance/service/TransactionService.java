@@ -5,7 +5,7 @@ public interface TransactionService {
 
     String addTransaction(String accountId, String amount, String description);
 
-    String update(String accountId, String amount, String description);
+    String update(String transactionId, String amount, String description);
 
     String delete(String transactionId);
 
