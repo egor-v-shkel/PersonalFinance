@@ -33,7 +33,7 @@ public class FileDatabase {
         return response + String.format("/%s.txt", nameDB);
     }
 
-    public <T> long getNextID(Map<Long, T> database) throws DAOException {
+    public <T> long getNextID(Map<Long, T> database) {
         Set<Long> idSet = database.keySet();
 
         long max = Long.MIN_VALUE;
@@ -48,7 +48,7 @@ public class FileDatabase {
             max = 1L;
         }
 
-        return max+1L;
+        return max;
 
     }
 }

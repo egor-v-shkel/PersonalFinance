@@ -15,12 +15,13 @@ public class FileUserDAO implements UserDAO {
         Map<Long, User> userDB = readDB();
 
         long nextID = FileDatabase.getInstance().getNextID(userDB);
+        newUser.setId(nextID);
 
         userDB.put(nextID, newUser);
         boolean writeToDBResponse = write(userDB);
 
         if (writeToDBResponse) {
-            response = "REGISTER fail.";
+            response = "REGISTER success";
         }
 
         return response;
@@ -57,12 +58,11 @@ public class FileUserDAO implements UserDAO {
         String response = "SING_IN fail";
         Map<Long, User> userDB = readDB();
         userDB.replace(user.getId(), user);
-        boolean writeResponse = write(userDB);
-        if(writeResponse){
+        if(write(userDB)){
             response = "SING_IN success";
         }
 
-        return null;
+        return response;
     }
 
     @Override

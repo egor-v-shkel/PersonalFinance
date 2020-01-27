@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
             User newUser = new User();
             newUser.setLogin(login);
             newUser.setPassword(password);
-            newUser.setSignInStatus(true);
+            newUser.setSignInStatus(false);
             newUser.setRoleID(Role.USER.ordinal());
             newUser.setAccountIDList(new ArrayList<>());
 

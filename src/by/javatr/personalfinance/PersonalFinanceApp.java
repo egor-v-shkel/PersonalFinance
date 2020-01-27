@@ -1,10 +1,25 @@
 package by.javatr.personalfinance;
 
+import by.javatr.personalfinance.bean.Account;
+import by.javatr.personalfinance.bean.Transaction;
+import by.javatr.personalfinance.bean.User;
 import by.javatr.personalfinance.controller.Controller;
+import by.javatr.personalfinance.dao.exception.DAOException;
+import by.javatr.personalfinance.dao.impl.FileAccountDAO;
+import by.javatr.personalfinance.dao.impl.FileTransactionDAO;
+import by.javatr.personalfinance.dao.impl.FileUserDAO;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PersonalFinanceApp {
+
+    static {
+        clearTransactionDB();
+        clearAccountDB();
+        clearUserDB();
+    }
 
     public static void main(String[] args) {
 
@@ -12,9 +27,9 @@ public class PersonalFinanceApp {
 
         String registerResponse = controller.executeCommand("REGISTER login:Bob, password:12345678");
         System.out.println(registerResponse);
-        String singIn = controller.executeCommand("SING_IN login:Paul, password:12345678");
+        String singIn = controller.executeCommand("SING_IN login:Bob, password:12345678");
         System.out.println(singIn);
-        String singOut = controller.executeCommand("SING_OUT login:Paul, password:12345678");
+        String singOut = controller.executeCommand("SING_OUT login:Bob, password:12345678");
         System.out.println(singOut);
         String updateResponse = controller
                 .executeCommand("UPDATE_USER_DATA user_id:1, login:Bob, oldPassword:12345678, newPassword:987654321");
@@ -31,7 +46,7 @@ public class PersonalFinanceApp {
         String adminSingOut = controller.executeCommand("SING_OUT login:admin, password:admin");
         System.out.println(adminSingOut);*/
 
-        String addAccountResponse = controller
+        /*String addAccountResponse = controller
                 .executeCommand("ADD_ACCOUNT login:Bob, account_name:wallet, type:cash, initial_amount:100");
         System.out.println(addAccountResponse);
         String getAccountResponse = controller
@@ -57,7 +72,41 @@ public class PersonalFinanceApp {
         controller.executeCommand("GET_TRANSACTION transaction_id:1");
         controller.executeCommand("GET_TRANSACTION_LIST account_id:1");
         controller.executeCommand("UPDATE_TRANSACTION transaction_id:1, amount:99, description:pay check");
-        controller.executeCommand("DELETE_TRANSACTION transaction_id:1");
+        controller.executeCommand("DELETE_TRANSACTION transaction_id:1");*/
 
     }
+
+    private static void clearTransactionDB() {
+        Map<Long, Transaction> transactionDB = new HashMap<>();
+        FileTransactionDAO fileTransactionDAO = new FileTransactionDAO();
+        try {
+            fileTransactionDAO.writeDB(transactionDB);
+            System.out.println("Transaction db cleared");
+        } catch (DAOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void clearAccountDB() {
+        Map<Long, Account> accountDB = new HashMap<>();
+        FileAccountDAO fileAccountDAO = new FileAccountDAO();
+        try {
+            fileAccountDAO.writeDB(accountDB);
+            System.out.println("Account db cleared");
+        } catch (DAOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void clearUserDB() {
+        Map<Long, User> transactionDB = new HashMap<>();
+        FileUserDAO fileUserDAO = new FileUserDAO();
+        try {
+            fileUserDAO.write(transactionDB);
+            System.out.println("User db cleared");
+        } catch (DAOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
