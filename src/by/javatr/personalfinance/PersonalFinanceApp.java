@@ -4,6 +4,7 @@ import by.javatr.personalfinance.bean.Account;
 import by.javatr.personalfinance.bean.Transaction;
 import by.javatr.personalfinance.bean.User;
 import by.javatr.personalfinance.controller.Controller;
+import by.javatr.personalfinance.controller.command.impl.DeleteTransaction;
 import by.javatr.personalfinance.dao.exception.DAOException;
 import by.javatr.personalfinance.dao.impl.FileAccountDAO;
 import by.javatr.personalfinance.dao.impl.FileTransactionDAO;
@@ -29,13 +30,13 @@ public class PersonalFinanceApp {
         System.out.println(registerResponse);
         String singIn = controller.executeCommand("SING_IN login:Bob, password:12345678");
         System.out.println(singIn);
-        String singOut = controller.executeCommand("SING_OUT login:Bob, password:12345678");
-        System.out.println(singOut);
+        /*String singOut = controller.executeCommand("SING_OUT login:Bob, password:12345678");
+        System.out.println(singOut);*/
         String updateResponse = controller
-                .executeCommand("UPDATE_USER_DATA user_id:1, login:Bob, oldPassword:12345678, newPassword:987654321");
+                .executeCommand("UPDATE_USER_DATA user_id:1, login:Paul, oldPassword:12345678, newPassword:987654321");
         System.out.println(updateResponse);
-        String delete = controller.executeCommand("DELETE_USER user_id:1, login:Bob, password:987654321");
-        System.out.println(delete);
+        /*String delete = controller.executeCommand("DELETE_USER user_id:1, login:Paul, password:987654321");
+        System.out.println(delete);*/
 
         /*String adminSingIn = controller.executeCommand("SING_IN login:admin, password:admin");
         System.out.println(adminSingIn);
@@ -46,17 +47,17 @@ public class PersonalFinanceApp {
         String adminSingOut = controller.executeCommand("SING_OUT login:admin, password:admin");
         System.out.println(adminSingOut);*/
 
-        /*String addAccountResponse = controller
-                .executeCommand("ADD_ACCOUNT login:Bob, account_name:wallet, type:cash, initial_amount:100");
+        String addAccountResponse = controller
+                .executeCommand("ADD_ACCOUNT login:Paul, account_name:wallet, type:cash, initial_amount:100");
         System.out.println(addAccountResponse);
         String getAccountResponse = controller
                 .executeCommand("GET_ACCOUNT account_id:1");
         System.out.println(getAccountResponse);
         String getAccountListResponse = controller
-                .executeCommand("GET_ACCOUNT_LIST user_id:Bob");
+                .executeCommand("GET_ACCOUNT_LIST user_id:1");
         System.out.println(getAccountListResponse);
         String getBalanceResponse = controller
-                .executeCommand("GET_BALANCE login:Bob, account_name:wallet");
+                .executeCommand("GET_BALANCE login:Paul, account_name:wallet");
         System.out.println(getBalanceResponse);
         String commonBalanceResponse = controller
                 .executeCommand("GET_COMMON_BALANCE user_id:1");
@@ -68,11 +69,22 @@ public class PersonalFinanceApp {
                 .executeCommand("DELETE_ACCOUNT account_id:1");
         System.out.println(deleteAccountResponse);
 
-        controller.executeCommand("ADD_TRANSACTION account_id:1, amount:50, description:pay day");
-        controller.executeCommand("GET_TRANSACTION transaction_id:1");
-        controller.executeCommand("GET_TRANSACTION_LIST account_id:1");
-        controller.executeCommand("UPDATE_TRANSACTION transaction_id:1, amount:99, description:pay check");
-        controller.executeCommand("DELETE_TRANSACTION transaction_id:1");*/
+        String addTransactionResponse =
+                controller.executeCommand("ADD_TRANSACTION account_id:1, amount:50, description:pay day");
+                controller.executeCommand("ADD_TRANSACTION account_id:1, amount:150, description:side job");
+        System.out.println(addTransactionResponse);
+        String getTransactionResponse =
+                controller.executeCommand("GET_TRANSACTION transaction_id:1");
+        System.out.println(getTransactionResponse);
+        String getTransactionListResponse =
+                controller.executeCommand("GET_TRANSACTION_LIST account_id:1");
+        System.out.println(getTransactionListResponse);
+        String updateTransactionResponse =
+                controller.executeCommand("UPDATE_TRANSACTION transaction_id:1, amount:99, description:pay check");
+        System.out.println(updateTransactionResponse);
+        String deleteTransactionResponse =
+                controller.executeCommand("DELETE_TRANSACTION transaction_id:1");
+        System.out.println(deleteTransactionResponse);
 
     }
 

@@ -14,7 +14,7 @@ public class FileAccountDAO implements AccountDAO {
 
     @Override
     public String add(Account account) throws DAOException {
-        String response = null;
+        String response;
         Map<Long, Account> accountDB = readDb();
 
         long nextID = FileDatabase.getInstance().getNextID(accountDB);

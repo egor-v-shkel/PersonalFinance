@@ -14,6 +14,7 @@ import by.javatr.personalfinance.service.exception.ServiceException;
 import by.javatr.personalfinance.service.exception.UserDataException;
 import by.javatr.personalfinance.service.utill.ServiceValidator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AccountServiceImpl implements AccountService {
@@ -46,6 +47,7 @@ public class AccountServiceImpl implements AccountService {
         account.setName(accountName);
         account.setType(AccountType.valueOf(type.toUpperCase()));
         account.setInitialAmount(Long.parseLong(initialAmount));
+        account.setTransactionsIDList(new ArrayList<>());
 
         AccountDAO fileAccountDAO = DAOFactory.getInstance().getFileAccountDAO();
         try {
@@ -135,8 +137,6 @@ public class AccountServiceImpl implements AccountService {
             long userId1 = Long.parseLong(userId);
             List<Account> accounts = fileAccountDAO.getAccountList(userId1);
 
-
-
             for (Account a :
                     accounts) {
                 sum += calculate(a.getInitialAmount(), a.getId());
@@ -153,7 +153,7 @@ public class AccountServiceImpl implements AccountService {
     public String updateAccount(String accountId, String name, String initialAmount) throws ServiceException {
         if (ServiceValidator.isValidUserdata(name))
             throw new UserDataException("Login can't be null or empty.");
-        if (ServiceValidator.isValidAmount(initialAmount))
+        if (!ServiceValidator.isValidAmount(initialAmount))
             throw new UserDataException("Amount can't be null or empty.");
         if (ServiceValidator.isValidID(accountId))
             throw new UserDataException("AccountId must be natural long number.");

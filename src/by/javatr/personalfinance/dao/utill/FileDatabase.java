@@ -45,10 +45,10 @@ public class FileDatabase {
         }
 
         if (max == Long.MIN_VALUE) {
-            max = 1L;
+            max = 0L;
         }
 
-        return max;
+        return max + 1L;
 
     }
 }

@@ -11,8 +11,8 @@ public class GetTransactionList extends TransactionCommand {
 
         try {
             requestParams = parser.getParams(request);
-            String transactionId = requestParams.get("transaction_id");
-            response = transactionService.getList(transactionId);
+            String accountId = requestParams.get("account_id");
+            response = transactionService.getList(accountId);
         } catch (ServiceException e) {
             e.printStackTrace();
             throw new ControllerException("Command exception: " + e.getMessage());

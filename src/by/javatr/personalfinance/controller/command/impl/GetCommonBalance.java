@@ -11,8 +11,8 @@ public class GetCommonBalance extends AccountCommand {
 
         try {
             requestParams = parser.getParams(request);
-            String login = requestParams.get("login");
-            response = accountService.calculateCommonBalance(login);
+            String userId = requestParams.get("user_id");
+            response = accountService.calculateCommonBalance(userId);
         } catch (ServiceException e) {
             e.printStackTrace();
             throw new ControllerException("Command exception: " + e.getMessage());
