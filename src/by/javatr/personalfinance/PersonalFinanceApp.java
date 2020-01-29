@@ -17,9 +17,9 @@ import java.util.Map;
 public class PersonalFinanceApp {
 
     static {
-        clearTransactionDB();
-        clearAccountDB();
         clearUserDB();
+        clearAccountDB();
+        clearTransactionDB();
     }
 
     public static void main(String[] args) {
@@ -85,6 +85,10 @@ public class PersonalFinanceApp {
         String deleteTransactionResponse =
                 controller.executeCommand("DELETE_TRANSACTION transaction_id:1");
         System.out.println(deleteTransactionResponse);
+
+        String commonBalanceResp = controller
+                .executeCommand("GET_COMMON_BALANCE user_id:1");
+        System.out.println(commonBalanceResp);
 
     }
 
