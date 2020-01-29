@@ -8,6 +8,9 @@ public enum CommandName {
     UPDATE_USER_DATA,
     DELETE_USER,
 
+    BAN,
+    UNBAN,
+
     ADD_ACCOUNT,
     GET_ACCOUNT,
     GET_ACCOUNT_LIST,

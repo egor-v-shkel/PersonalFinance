@@ -40,6 +40,8 @@ public class FileTransactionDAO implements TransactionDAO {
         HashMap<Long, Transaction> database = readDb();
         database.replace(transaction.getId(), transaction);
 
+        writeDB(database);
+
         return response;
     }
 

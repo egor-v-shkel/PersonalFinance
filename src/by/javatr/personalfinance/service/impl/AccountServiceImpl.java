@@ -24,14 +24,16 @@ public class AccountServiceImpl implements AccountService {
 
         String response = "ADD_ACCOUNT service exception";
 
-        if (ServiceValidator.isValidUserdata(login))
+        if (ServiceValidator.checkUserdata(login))
             throw new UserDataException("Login can't be null or empty.");
-        if (ServiceValidator.isValidUserdata(accountName))
+        if (ServiceValidator.checkUserdata(accountName))
             throw new UserDataException("Account name can't be null or empty.");
-        if (ServiceValidator.isValidUserdata(type))
+        if (ServiceValidator.checkUserdata(type))
             throw new UserDataException("Account type can't be null or empty.");
-        if (!ServiceValidator.isValidAmount(initialAmount))
+        if (ServiceValidator.checkAmount(initialAmount))
             throw new UserDataException("Initial amount must be long number.");
+        if (ServiceValidator.checkAccountType(type))
+            throw new UserDataException("Unknown type");
 
         User user = null;
         UserDAO fileUserDAO = DAOFactory.getInstance().getFileUserDAO();
@@ -63,7 +65,7 @@ public class AccountServiceImpl implements AccountService {
 
         try {
             fileUserDAO.updateData(user);
-            response = "ADD_ACCOUNT success";
+            response = String.format("ADD_ACCOUNT account_id:%d", accountID);
         } catch (DAOException e) {
             e.printStackTrace();
             throw new ServiceException("Can't update account", e);
@@ -76,9 +78,9 @@ public class AccountServiceImpl implements AccountService {
     public String calculateBalance(String login, String accountName) throws ServiceException {
         String response = "ADD_ACCOUNT service exception";
 
-        if (ServiceValidator.isValidUserdata(login))
+        if (ServiceValidator.checkUserdata(login))
             throw new UserDataException("Login can't be null or empty.");
-        if (ServiceValidator.isValidUserdata(accountName))
+        if (ServiceValidator.checkUserdata(accountName))
             throw new UserDataException("Account name can't be null or empty.");
 
         DAOFactory daoFactory = DAOFactory.getInstance();
@@ -125,7 +127,7 @@ public class AccountServiceImpl implements AccountService {
     public String calculateCommonBalance(String userId) throws ServiceException {
         String response = "ADD_ACCOUNT service exception";
 
-        if (ServiceValidator.isValidID(userId))
+        if (ServiceValidator.checkId(userId))
             throw new UserDataException("Login can't be null or empty.");
 
         AccountDAO fileAccountDAO = DAOFactory.getInstance().getFileAccountDAO();
@@ -151,11 +153,11 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public String updateAccount(String accountId, String name, String initialAmount) throws ServiceException {
-        if (ServiceValidator.isValidUserdata(name))
+        if (ServiceValidator.checkUserdata(name))
             throw new UserDataException("Login can't be null or empty.");
-        if (!ServiceValidator.isValidAmount(initialAmount))
+        if (ServiceValidator.checkAmount(initialAmount))
             throw new UserDataException("Amount can't be null or empty.");
-        if (ServiceValidator.isValidID(accountId))
+        if (ServiceValidator.checkId(accountId))
             throw new UserDataException("AccountId must be natural long number.");
 
         String response = "UPDATE_ACCOUNT success";
@@ -178,7 +180,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public String getAccountList(String userId) throws ServiceException {
-        if (ServiceValidator.isValidID(userId))
+        if (ServiceValidator.checkId(userId))
             throw new UserDataException("User id can't be null or empty.");
 
         String response;
@@ -198,7 +200,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public String getAccount(String accountId) throws ServiceException {
-        if (ServiceValidator.isValidID(accountId))
+        if (ServiceValidator.checkId(accountId))
             throw new UserDataException("AccountID can't be null or empty.");
 
         String response;
@@ -228,14 +230,32 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public String deleteAccount(String accountId) throws ServiceException {
-        if (ServiceValidator.isValidID(accountId))
+        if (ServiceValidator.checkId(accountId))
             throw new UserDataException("AccountID can't be null or empty.");
 
         String response;
+        UserDAO fileUserDAO = DAOFactory.getInstance().getFileUserDAO();
         AccountDAO accountDAO = DAOFactory.getInstance().getFileAccountDAO();
+        TransactionDAO fileTransactionDAO = DAOFactory.getInstance().getFileTransactionDAO();
 
         try {
-            accountDAO.deleteAccount(Long.parseLong(accountId));
+            long accountIdL = Long.parseLong(accountId);
+            Account account = accountDAO.getAccount(accountIdL);
+            long userID = account.getUserID();
+
+            User user = fileUserDAO.getUser(userID);
+            List<Long> accountIDList = user.getAccountIDList();
+            accountIDList.remove(accountIdL);
+            user.setAccountIDList(accountIDList);
+            fileUserDAO.updateData(user);
+
+            List<Long> transactionsIDList = account.getTransactionsIDList();
+            for (Long t :
+                    transactionsIDList) {
+                fileTransactionDAO.delete(t);
+            }
+
+            accountDAO.deleteAccount(accountIdL);
             response = "DELETE_ACCOUNT success";
         } catch (DAOException e) {
             response = "UPDATE_DATA problem occur while accessing DB";

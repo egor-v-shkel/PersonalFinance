@@ -6,11 +6,11 @@ import java.util.Objects;
 
 public class Transaction implements Serializable {
 
-    private static final long serialVersionUID = 303044282978682950L;
+    private static final long serialVersionUID = -8635883031814978974L;
 
     private long id;
     private long amount;
-    private long account_id;
+    private long accountId;
     private Date date;
     private String notes;
 
@@ -24,12 +24,12 @@ public class Transaction implements Serializable {
         this.amount = amount;
     }
 
-    public long getAccount_id() {
-        return account_id;
+    public long getAccountId() {
+        return accountId;
     }
 
-    public void setAccount_id(long account_id) {
-        this.account_id = account_id;
+    public void setAccountId(long accountId) {
+        this.accountId = accountId;
     }
 
     public long getId() {
@@ -62,7 +62,7 @@ public class Transaction implements Serializable {
         if (object == null || getClass() != object.getClass()) return false;
         Transaction that = (Transaction) object;
         return amount == that.amount &&
-                account_id == that.account_id &&
+                accountId == that.accountId &&
                 id == that.id &&
                 Objects.equals(date, that.date) &&
                 Objects.equals(notes, that.notes);
@@ -70,14 +70,14 @@ public class Transaction implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(amount, account_id, id, date, notes);
+        return Objects.hash(amount, accountId, id, date, notes);
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName()+"{" +
                 "amount=" + amount +
-                ", account_id=" + account_id +
+                ", account_id=" + accountId +
                 ", id=" + id +
                 ", date=" + date +
                 ", notes='" + notes + '\'' +

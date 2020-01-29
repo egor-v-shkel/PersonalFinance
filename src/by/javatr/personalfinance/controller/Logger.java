@@ -1,11 +1,6 @@
-package by.javatr.personalfinance.service.utill;
+package by.javatr.personalfinance.controller;
 
-import by.javatr.personalfinance.controller.ControllerException;
-
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Date;
 import java.util.Properties;
 
@@ -17,10 +12,7 @@ public class Logger {
     public static <T> void log(Class<T> tClass, Exception e) {
 
         Properties properties = new Properties();
-
         String logDir;
-
-        PrintWriter printWriter = null;
         FileWriter fileWriter;
 
         try (FileInputStream fis = new FileInputStream("resources/config.properties")) {
@@ -29,12 +21,14 @@ public class Logger {
             logDir = properties.getProperty("log.dir");
             String fullPath = logDir + String.format("/%s.txt", tClass.getSimpleName());
 
-            fileWriter = new FileWriter(fullPath, true);
-            printWriter = new PrintWriter(fileWriter);
-            printWriter.printf("\n%s - %s\n", new Date(), e.getMessage());
-
+            File log = new File(fullPath);
+            log.getParentFile().mkdirs();
+            fileWriter = new FileWriter(log, true);
+            String message = String.format("\n%tc - %s\n", new Date(), e.getMessage());
+            fileWriter.append(message);
+            fileWriter.close();
         } catch (IOException ex) {
-            e.printStackTrace();
+            ex.printStackTrace();
         }
     }
 }

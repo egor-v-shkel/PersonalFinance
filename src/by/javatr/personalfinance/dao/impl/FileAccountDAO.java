@@ -1,11 +1,9 @@
 package by.javatr.personalfinance.dao.impl;
 
 import by.javatr.personalfinance.bean.Account;
-import by.javatr.personalfinance.bean.User;
 import by.javatr.personalfinance.dao.AccountDAO;
 import by.javatr.personalfinance.dao.exception.DAOException;
 import by.javatr.personalfinance.dao.utill.FileDatabase;
-import by.javatr.personalfinance.service.AccountType;
 
 import java.io.*;
 import java.util.*;
@@ -37,11 +35,9 @@ public class FileAccountDAO implements AccountDAO {
     public Account getAccount(long userID, String accountName) throws DAOException {
         HashMap<Long, Account> accountDB = readDb();
         Collection<Account> values = accountDB.values();
-        Iterator<Account> iterator = values.iterator();
 
-        while(iterator.hasNext()) {
-            Account nextAccount = iterator.next();
-            if (nextAccount.getName().equals(accountName)){
+        for (Account nextAccount : values) {
+            if (nextAccount.getName().equals(accountName)) {
                 return nextAccount;
             }
         }
@@ -94,7 +90,6 @@ public class FileAccountDAO implements AccountDAO {
         String response = "DELETE failed";
 
         HashMap<Long, Account> accountDB = readDb();
-
         readDb().remove(accountID);
 
         if (writeDB(accountDB)) {

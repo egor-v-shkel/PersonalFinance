@@ -18,9 +18,9 @@ public class TransactionServiceImpl implements TransactionService {
     public String addTransaction(String accountId, String amount, String description) throws ServiceException {
         String response;
 
-        if (!ServiceValidator.isValidAmount(amount))
+        if (ServiceValidator.checkAmount(amount))
             throw new ServiceException("Amount can't be null or empty.");
-        if (ServiceValidator.isValidUserdata(description))
+        if (ServiceValidator.checkUserdata(description))
             throw new ServiceException("Description can't be null or empty.");
 
 
@@ -29,20 +29,21 @@ public class TransactionServiceImpl implements TransactionService {
         try {
             Transaction transaction = new Transaction();
             long amountL = Long.parseLong(amount);
+            long accountIdL = Long.parseLong(accountId);
             transaction.setAmount(amountL);
             transaction.setNotes(description);
             transaction.setDate(new Date());
+            transaction.setAccountId(accountIdL);
             fileTransactionDAO.add(transaction);
             long transactionId = transaction.getId();
 
-            long accountIdL = Long.parseLong(accountId);
             Account account = accountDAO.getAccount(accountIdL);
             List<Long> transactionsIDList = account.getTransactionsIDList();
             transactionsIDList.add(transactionId);
             account.setTransactionsIDList(transactionsIDList);
             accountDAO.update(account);
 
-            response = "ADD_TRANSACTION success";
+            response = String.format("ADD_TRANSACTION transaction_id:%d", transactionId);
         } catch (DAOException e) {
             response = "ADD_TRANSACTION service exception";
             e.printStackTrace();
@@ -56,11 +57,11 @@ public class TransactionServiceImpl implements TransactionService {
     public String update(String transactionId, String amount, String description) throws ServiceException {
         String response;
 
-        if (ServiceValidator.isValidID(transactionId))
+        if (ServiceValidator.checkId(transactionId))
             throw new ServiceException("Transaction id can't be null or empty.");
-        if (!ServiceValidator.isValidAmount(amount))
+        if (ServiceValidator.checkAmount(amount))
             throw new ServiceException("Amount can't be null or empty.");
-        if (ServiceValidator.isValidUserdata(description))
+        if (ServiceValidator.checkUserdata(description))
             throw new ServiceException("Description can't be null or empty.");
 
 
@@ -88,14 +89,22 @@ public class TransactionServiceImpl implements TransactionService {
     public String delete(String transactionId) throws ServiceException {
         String response;
 
-        if (ServiceValidator.isValidID(transactionId))
+        if (ServiceValidator.checkId(transactionId))
             throw new ServiceException("Transaction id can't be null or empty.");
 
 
         TransactionDAO fileTransactionDAO = DAOFactory.getInstance().getFileTransactionDAO();
+        AccountDAO fileAccountDAO = DAOFactory.getInstance().getFileAccountDAO();
         try {
-            long transactionID = Long.parseLong(transactionId);
-            fileTransactionDAO.delete(transactionID);
+            long transactionIdL = Long.parseLong(transactionId);
+            long accountId = fileTransactionDAO.get(transactionIdL).getAccountId();
+            fileTransactionDAO.delete(transactionIdL);
+
+            Account account = fileAccountDAO.getAccount(accountId);
+            List<Long> transactionsIDList = account.getTransactionsIDList();
+            transactionsIDList.remove(transactionIdL);
+            account.setTransactionsIDList(transactionsIDList);
+            fileAccountDAO.update(account);
 
             response = "DELETE_TRANSACTION success";
         } catch (DAOException e) {
@@ -111,7 +120,7 @@ public class TransactionServiceImpl implements TransactionService {
     public String get(String transactionId) throws ServiceException {
         String response;
 
-        if (ServiceValidator.isValidID(transactionId))
+        if (ServiceValidator.checkId(transactionId))
             throw new ServiceException("Transaction id can't be null or empty.");
 
         TransactionDAO fileTransactionDAO = DAOFactory.getInstance().getFileTransactionDAO();
@@ -137,7 +146,7 @@ public class TransactionServiceImpl implements TransactionService {
     public String getList(String accountId) throws ServiceException {
         String response = "GET_TRANSACTION_LIST no transactions for current account";
 
-        if (ServiceValidator.isValidID(accountId))
+        if (ServiceValidator.checkId(accountId))
             throw new ServiceException("Account id can't be null or empty.");
 
         TransactionDAO fileTransactionDAO = DAOFactory.getInstance().getFileTransactionDAO();

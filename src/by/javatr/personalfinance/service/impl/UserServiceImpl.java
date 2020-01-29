@@ -1,25 +1,29 @@
 package by.javatr.personalfinance.service.impl;
 
 import by.javatr.personalfinance.bean.User;
+import by.javatr.personalfinance.dao.AccountDAO;
 import by.javatr.personalfinance.dao.UserDAO;
 import by.javatr.personalfinance.dao.exception.DAOException;
 import by.javatr.personalfinance.dao.factory.DAOFactory;
+import by.javatr.personalfinance.service.AccountService;
 import by.javatr.personalfinance.service.Role;
 import by.javatr.personalfinance.service.UserService;
 import by.javatr.personalfinance.service.exception.ServiceException;
 import by.javatr.personalfinance.service.exception.UserDataException;
+import by.javatr.personalfinance.service.factory.ServiceFactory;
 import by.javatr.personalfinance.service.utill.ServiceValidator;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserServiceImpl implements UserService {
 
     @Override
     public String register(String login, String password) throws ServiceException {
         String response = "REGISTER user exist";
-        if (ServiceValidator.isValidUserdata(login))
+        if (ServiceValidator.checkUserdata(login))
             throw new UserDataException("Login can't be null or empty.");
-        if (ServiceValidator.isValidUserdata(password))
+        if (ServiceValidator.checkUserdata(password))
             throw new UserDataException("Password can't be null or empty.");
 
         User user = null;
@@ -54,10 +58,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public String singIn(String login, String password) throws ServiceException {
 
-        if (ServiceValidator.isValidUserdata(login)) {
+        if (ServiceValidator.checkAdmin(login, password)) {
+            return "SING_IN admin";
+        }
+        if (ServiceValidator.checkBan(login)) {
+            return "SING_IN you are banned";
+        }
+
+        if (ServiceValidator.checkUserdata(login)) {
             throw new UserDataException("Login can't be null or empty.");
         }
-        if (ServiceValidator.isValidUserdata(password)) {
+        if (ServiceValidator.checkUserdata(password)) {
             throw new UserDataException("Password can't be null or empty.");
         }
 
@@ -77,11 +88,11 @@ public class UserServiceImpl implements UserService {
                     && user.getLogin().equals(login)) {
                 user.setSignInStatus(true);
                 fileUserDAO.singIn(user);
-                response = "SIGN_IN success";
+                long userId = user.getId();
+                response = String.format("SIGN_IN user_id:%d", userId);
             }
         } catch (DAOException e) {
             response = "SING_IN unknown login.";
-            //e.printStackTrace();
         }
 
         return response;
@@ -90,9 +101,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public String singOut(String login, String password) throws ServiceException {
 
-        if (ServiceValidator.isValidUserdata(password))
+        if (ServiceValidator.checkUserdata(password))
             throw new UserDataException("Password can't be null or empty.");
-        if (ServiceValidator.isValidID(login))
+        if (ServiceValidator.checkId(login))
             throw new UserDataException("Login must be natural long number.");
 
         UserDAO fileUserDAO = DAOFactory.getInstance().getFileUserDAO();
@@ -125,13 +136,13 @@ public class UserServiceImpl implements UserService {
     public String updateData(String userID, String newLogin, String oldPassword, String newPassword)
             throws ServiceException {
 
-        if (ServiceValidator.isValidUserdata(newLogin))
+        if (ServiceValidator.checkUserdata(newLogin))
             throw new UserDataException("Login can't be null or empty.");
-        if (ServiceValidator.isValidUserdata(oldPassword))
+        if (ServiceValidator.checkUserdata(oldPassword))
             throw new UserDataException("Password can't be null or empty.");
-        if (ServiceValidator.isValidUserdata(newPassword))
+        if (ServiceValidator.checkUserdata(newPassword))
             throw new UserDataException("Password can't be null or empty.");
-        if (ServiceValidator.isValidID(userID))
+        if (ServiceValidator.checkId(userID))
             throw new UserDataException("UserID must be natural long number.");
 
         String response = "UPDATE_DATA success";
@@ -155,9 +166,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String delete(String userID, String password) throws ServiceException {
-        if (ServiceValidator.isValidUserdata(password))
+        if (ServiceValidator.checkUserdata(password))
             throw new UserDataException("Password can't be null or empty.");
-        if (ServiceValidator.isValidID(userID))
+        if (ServiceValidator.checkId(userID))
             throw new UserDataException("UserID must be natural long number.");
 
         String response = "DELETE success";
@@ -167,6 +178,13 @@ public class UserServiceImpl implements UserService {
         try {
             User user = fileUserDAO.getUser(id);
             if (user.getPassword().equals(password)) {
+                List<Long> accountIDList = user.getAccountIDList();
+                for (Long accountId :
+                        accountIDList) {
+                    AccountService accountService = ServiceFactory.getInstance().getAccountService();
+                    String accountIdStr = Long.toString(accountId);
+                    accountService.deleteAccount(accountIdStr);
+                }
                 fileUserDAO.delete(user);
             }
         } catch (DAOException e) {
@@ -176,5 +194,53 @@ public class UserServiceImpl implements UserService {
 
         return response;
 
+    }
+
+    @Override
+    public String ban(String login, String password, String userId) throws ServiceException {
+        String response = "Unsuccessful attempt to perform ban.";
+        if (ServiceValidator.checkId(userId)) {
+            throw new ServiceException("UserId must be long natural number");
+        }
+
+        boolean isAdmin = ServiceValidator.checkAdmin(login, password);
+        if (isAdmin) {
+            UserDAO fileUserDAO = DAOFactory.getInstance().getFileUserDAO();
+            long userIdL = Long.parseLong(userId);
+            try {
+                User user = fileUserDAO.getUser(userIdL);
+                user.setBanStat(true);
+                fileUserDAO.updateData(user);
+                response = "BAN success";
+            } catch (DAOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return response;
+    }
+
+    @Override
+    public String unban(String login, String password, String userId) throws ServiceException {
+        String response = "Unsuccessful attempt to perform unban.";
+        if (ServiceValidator.checkId(userId)) {
+            throw new ServiceException("UserId must be long natural number");
+        }
+
+        boolean isAdmin = ServiceValidator.checkAdmin(login, password);
+        if (isAdmin) {
+            UserDAO fileUserDAO = DAOFactory.getInstance().getFileUserDAO();
+            long userIdL = Long.parseLong(userId);
+            try {
+                User user = fileUserDAO.getUser(userIdL);
+                user.setBanStat(false);
+                fileUserDAO.updateData(user);
+                response = "UNBAN success";
+            } catch (DAOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return response;
     }
 }

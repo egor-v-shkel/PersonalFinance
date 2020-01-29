@@ -23,6 +23,10 @@ final class CommandProvider {
         repository.put(CommandName.UPDATE_USER_DATA, new UpdateUserData());
         repository.put(CommandName.DELETE_USER, new DeleteUser());
 
+
+        repository.put(CommandName.BAN, new Ban());
+        repository.put(CommandName.UNBAN, new UnBan());
+
         repository.put(CommandName.ADD_ACCOUNT, new AddAccount());
         repository.put(CommandName.GET_ACCOUNT, new GetAccount());
         repository.put(CommandName.GET_ACCOUNT_LIST, new GetAccountList());

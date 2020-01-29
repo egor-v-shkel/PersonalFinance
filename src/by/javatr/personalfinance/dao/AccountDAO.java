@@ -2,7 +2,6 @@ package by.javatr.personalfinance.dao;
 
 import by.javatr.personalfinance.bean.Account;
 import by.javatr.personalfinance.dao.exception.DAOException;
-import by.javatr.personalfinance.service.AccountType;
 
 import java.util.List;
 

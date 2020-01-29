@@ -21,7 +21,7 @@ public class SingIn extends UserCommand {
             response = userService.singIn(login, password);
         } catch (ServiceException e) {
             e.printStackTrace();
-            throw new ControllerException("Command layer exception: " + e.getMessage());
+            throw new ControllerException(this.getClass().getSimpleName() + " command exception: " + e.getMessage());
         }
         return response;
     }

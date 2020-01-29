@@ -20,7 +20,7 @@ public class Register extends UserCommand {
             response = userService.register(login, password);
         } catch (ServiceException e) {
             e.printStackTrace();
-            throw new ControllerException("Command exception: " + e.getMessage());
+            throw new ControllerException(this.getClass().getSimpleName()+" command exception: " + e.getMessage());
         }
         return response;
     }
